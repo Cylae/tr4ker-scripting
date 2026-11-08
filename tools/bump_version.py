@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""Update the ``@version`` metadata of a userscript.
+
+Supported ids are the legacy scripts found in ``src/userscripts`` plus
+``pimpmyshoutbox-next`` (``next/pimpmyshoutbox/metadata.user.js``).
+Only the first ``@version`` line of the ``==UserScript==`` header is touched.
+"""
 
 from __future__ import annotations
 
@@ -8,7 +14,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = ROOT / "src" / "userscripts"
+NEXT_SCRIPTS = {
+    "pimpmyshoutbox-next": ROOT / "next" / "pimpmyshoutbox" / "metadata.user.js",
+}
 VERSION_RE = re.compile(r"^(?P<prefix>//\s*@version\s+)(?P<version>\S+)(?P<suffix>.*)$")
+HEADER_START = "// ==UserScript=="
+HEADER_END = "// ==/UserScript=="
 
 
 def iter_scripts() -> dict[str, Path]:
@@ -16,6 +27,9 @@ def iter_scripts() -> dict[str, Path]:
     for source_path in sorted(SCRIPTS_DIR.rglob("*.user.js")):
         script_id = source_path.relative_to(SCRIPTS_DIR).as_posix()[: -len(".user.js")].replace("/", "-")
         scripts[script_id] = source_path
+    for script_id, source_path in NEXT_SCRIPTS.items():
+        if source_path.exists():
+            scripts[script_id] = source_path
     return scripts
 
 
@@ -24,24 +38,30 @@ def validate_version(version: str) -> None:
         raise ValueError("Version must use numeric segments like 2.15 or 2.15.1")
 
 
-def bump_script_version(source_path: Path, next_version: str) -> None:
-    source_lines = source_path.read_text(encoding="utf-8").splitlines()
-    updated_lines: list[str] = []
-    changed = False
-
-    for line in source_lines:
-        match = VERSION_RE.match(line)
-        if not match:
-            updated_lines.append(line)
+def bump_content(content: str, next_version: str, label: str = "script") -> str:
+    """Return ``content`` with the header ``@version`` set to ``next_version``."""
+    lines = content.splitlines()
+    in_header = False
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped == HEADER_START:
+            in_header = True
             continue
+        if stripped == HEADER_END:
+            break
+        if not in_header:
+            continue
+        match = VERSION_RE.match(line)
+        if match:
+            lines[index] = f"{match.group('prefix')}{next_version}{match.group('suffix')}"
+            return "\n".join(lines) + "\n"
 
-        updated_lines.append(f"{match.group('prefix')}{next_version}{match.group('suffix')}")
-        changed = True
+    raise RuntimeError(f"{label}: missing @version metadata line")
 
-    if not changed:
-        raise RuntimeError(f"{source_path}: missing @version metadata line")
 
-    source_path.write_text("\n".join(updated_lines) + "\n", encoding="utf-8")
+def bump_script_version(source_path: Path, next_version: str) -> None:
+    content = source_path.read_text(encoding="utf-8")
+    source_path.write_text(bump_content(content, next_version, str(source_path)), encoding="utf-8")
 
 
 def main(argv: list[str]) -> int:

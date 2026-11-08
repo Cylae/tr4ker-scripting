@@ -16,8 +16,22 @@ The repository follows a classic git flow:
 1. Start from `develop`.
 2. Create a feature branch: `git switch -c feature/my-script-change`.
 3. Add or edit source files in `src/userscripts/*.user.js`.
-4. Run `python3 tools/build_userscripts.py --check` during development and `python3 tools/build_userscripts.py` before local manual installation.
+4. Run `make verify` (or the individual gates below) before every push. It runs the exact checks of the CI:
+
+   ```bash
+   python3 -m unittest discover tests
+   python3 tools/build_userscripts.py --check
+   python3 tools/check_userscripts_syntax.py
+   cd next/pimpmyshoutbox && npm ci && npm test && npm run check
+   ```
+
+   Run `python3 tools/build_userscripts.py` before a local manual installation of a legacy script.
 5. Open a pull request towards `develop`.
+
+PimpMyShoutbox Next lives in `next/pimpmyshoutbox` and has its own guide
+(`README.md`, `CORE_ARCHITECTURE.md`, `SECURITY.md`). Its metadata block is
+`next/pimpmyshoutbox/metadata.user.js`; each `@updateURL` / `@downloadURL` must
+appear exactly once (enforced by tests).
 
 ## Release workflow
 
@@ -26,6 +40,7 @@ The repository follows a classic git flow:
 
    ```bash
    python3 tools/bump_version.py pimpmyshoutbox 3.0.33
+   python3 tools/bump_version.py pimpmyshoutbox-next 4.0.5   # Next, if impacted
    ```
 
 3. Rebuild artifacts:

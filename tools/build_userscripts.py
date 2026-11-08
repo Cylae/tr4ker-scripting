@@ -24,7 +24,25 @@ DEFAULT_NAMESPACE_VALUES = {
     "https://tampermonkey.net/",
 }
 REQUIRED_KEYS = {"name", "version", "description"}
+# Keys that Tampermonkey reads once: a duplicate is almost always a copy/paste mistake.
+SINGLETON_KEYS = {
+    "name",
+    "namespace",
+    "version",
+    "description",
+    "author",
+    "icon",
+    "homepageURL",
+    "supportURL",
+    "updateURL",
+    "downloadURL",
+    "run-at",
+}
 URL_METADATA_KEYS = {"icon", "homepageURL", "supportURL", "updateURL", "downloadURL"}
+
+
+class BuildError(RuntimeError):
+    pass
 
 
 @dataclass(frozen=True)
@@ -171,7 +189,29 @@ def compute_metadata_overrides(
     }
 
 
-def validate_metadata(values: dict[str, str], source_path: Path) -> None:
+def find_duplicate_singleton_keys(entries: list[tuple[str, str, str]]) -> list[str]:
+    seen: set[str] = set()
+    duplicates: set[str] = set()
+    for entry_type, key, _ in entries:
+        if entry_type != "meta" or key not in SINGLETON_KEYS:
+            continue
+        if key in seen:
+            duplicates.add(key)
+        seen.add(key)
+    return sorted(duplicates)
+
+
+def validate_metadata(
+    values: dict[str, str],
+    source_path: Path,
+    entries: list[tuple[str, str, str]] | None = None,
+) -> None:
+    duplicates = find_duplicate_singleton_keys(entries or [])
+    if duplicates:
+        raise BuildError(
+            f"{source_path}: duplicated metadata key(s): {', '.join('@' + key for key in duplicates)}"
+        )
+
     missing_keys = sorted(REQUIRED_KEYS - values.keys())
     if missing_keys:
         missing = ", ".join(missing_keys)
@@ -241,7 +281,7 @@ def build_outputs(config: RepoConfig, script: ScriptDefinition) -> dict[str, str
     source_content = script.source_path.read_text(encoding="utf-8")
     match, metadata_entries = read_metadata_block(source_content, script.source_path)
     metadata_values = extract_metadata_values(metadata_entries)
-    validate_metadata(metadata_values, script.source_path)
+    validate_metadata(metadata_values, script.source_path, metadata_entries)
 
     overrides = compute_metadata_overrides(config, script, metadata_values)
     merged_entries = merge_metadata_entries(metadata_entries, overrides)
@@ -330,10 +370,6 @@ def main() -> int:
     except BuildError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
-
-
-class BuildError(RuntimeError):
-    pass
 
 
 if __name__ == "__main__":

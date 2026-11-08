@@ -3,5 +3,10 @@ __pycache__/
 *.pyc
 next/**/dist/
 next/**/node_modules/
+node_modules/
 SOURCE TR4KER/
 .idea
+.vscode/
+.DS_Store
+Thumbs.db
+*.log

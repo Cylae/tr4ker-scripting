@@ -3,9 +3,6 @@
 Ce dossier contient la version modulaire Next de PimpMyShoutbox. Son build est
 distinct du build Python legacy ; le workflow **Publish Userscripts** assemble
 les deux et publie leurs artefacts sur la branche `userscripts` depuis `main`.
-Ce dossier contient la version modulaire Next de PimpMyShoutbox. Son build est
-distinct du build Python legacy ; le workflow **Publish Userscripts** assemble
-les deux et publie leurs artefacts sur la branche `userscripts` depuis `main`.
 
 ## Principes
 
@@ -27,8 +24,7 @@ bonne version) :
 
 ```bash
 nvm use
-npm install
-npm test
+npm ci
 npm test
 npm run check
 ```
@@ -37,11 +33,8 @@ Le bundle de développement est créé dans `dist/pimpmyshoutbox-next.user.js`.
 Il porte le nom **Tr4ker - PimpMyShoutbox Next**. Pour migrer depuis la V3,
 exporter sa configuration, installer Next et désactiver l'ancien script avant
 de recharger le site puis d'importer la configuration dans Next.
-Il porte le nom **Tr4ker - PimpMyShoutbox Next**. Pour migrer depuis la V3,
-exporter sa configuration, installer Next et désactiver l'ancien script avant
-de recharger le site puis d'importer la configuration dans Next.
 
-Pour executer le build esbuild :
+Pour exécuter le build esbuild :
 ```bash
 cd next/pimpmyshoutbox
 nvm use
@@ -49,8 +42,7 @@ npm run check
 ```
 
 Une fois installé, le raccourci `Ctrl+Alt+C` sous Windows/Linux ou `Ctrl+⌘+C`
-sous macOS ouvre la configuration globale. Elle est volontairement vide tant
-qu'aucune feature n'a été migrée. La fenêtre peut être déplacée avec son en-tête
+sous macOS ouvre la configuration globale. La fenêtre peut être déplacée avec son en-tête
 et redimensionnée depuis son coin inférieur droit ; sa position et sa taille
 sont conservées localement. Ses onglets passent automatiquement en haut à
 l’horizontale lorsqu’elle est plus large que haute.

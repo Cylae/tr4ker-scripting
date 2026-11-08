@@ -33,6 +33,12 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Test the Python tooling
+        run: python3 -m unittest discover tests
+
+      - name: Validate userscript metadata
+        run: python3 tools/build_userscripts.py --check
+
       - name: Validate userscript syntax
         run: python3 tools/check_userscripts_syntax.py
 

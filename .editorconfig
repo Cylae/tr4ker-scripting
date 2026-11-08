@@ -16,3 +16,14 @@ indent_size = 4
 
 [Makefile]
 indent_style = tab
+
+[*.mjs]
+indent_style = space
+indent_size = 4
+
+[*.{json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
