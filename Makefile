@@ -4,7 +4,7 @@ NEXT_DIR := next/pimpmyshoutbox
 
 .DEFAULT_GOAL := help
 
-.PHONY: help audit build check clean list bump release syntax test next-install next-test next-build verify
+.PHONY: help doctor audit build check clean list bump release syntax test next-install next-test next-build verify
 
 help: ## Show the available targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-14s %s\n", $$1, $$2}'
@@ -34,13 +34,17 @@ next-test: ## Run the PimpMyShoutbox Next test suite
 next-build: ## Build and syntax-check the PimpMyShoutbox Next bundle
 	cd $(NEXT_DIR) && $(NPM) run check
 
-verify: test check next-test next-build ## Run every gate that CI runs
+verify: ## Run every gate that CI runs (with a pass/fail summary)
+	$(PYTHON) tools/tr4ker.py verify
+
+doctor: ## Check Python, Node, npm, git and the configuration
+	$(PYTHON) tools/tr4ker.py doctor
 
 clean: ## Remove generated build output
 	rm -rf dist $(NEXT_DIR)/dist
 
-list: ## List the legacy script ids
-	$(PYTHON) tools/build_userscripts.py --list
+list: ## List scripts with their version and install URLs
+	$(PYTHON) tools/tr4ker.py list --urls
 
 bump: ## Bump a version: make bump SCRIPT=<id> VERSION=<x.y.z>
 ifndef SCRIPT

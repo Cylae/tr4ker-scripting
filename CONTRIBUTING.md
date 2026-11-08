@@ -16,7 +16,7 @@ The repository follows a classic git flow:
 1. Start from `develop`.
 2. Create a feature branch: `git switch -c feature/my-script-change`.
 3. Add or edit source files in `src/userscripts/*.user.js`.
-4. Run `make verify` (or the individual gates below) before every push. It runs the exact checks of the CI:
+4. Run `python tools/tr4ker.py verify` (or `make verify`) before every push; `python tools/tr4ker.py doctor` checks your environment. It runs the exact checks of the CI:
 
    ```bash
    python3 -m unittest discover tests
@@ -39,8 +39,8 @@ appear exactly once (enforced by tests).
 2. Bump the published metadata version of the impacted script:
 
    ```bash
-   python3 tools/bump_version.py pimpmyshoutbox 3.0.33
-   python3 tools/bump_version.py pimpmyshoutbox-next 4.0.5   # Next, if impacted
+   python3 tools/tr4ker.py bump pimpmyshoutbox 3.0.33
+   python3 tools/tr4ker.py bump pimpmyshoutbox-next patch    # Next, if impacted (-n = dry run)
    ```
 
 3. Rebuild artifacts:

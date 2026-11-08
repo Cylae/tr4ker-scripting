@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import contextlib
+import io
+import json
 import sys
 import unittest
 from pathlib import Path
@@ -11,6 +14,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import build_userscripts as build  # noqa: E402
 import bump_version  # noqa: E402
+import tr4ker  # noqa: E402
 
 SAMPLE = """// ==UserScript==
 // @name         Demo
@@ -61,6 +65,31 @@ class BumpVersionTests(unittest.TestCase):
 
     def test_next_script_is_listed(self) -> None:
         self.assertIn("pimpmyshoutbox-next", bump_version.iter_scripts())
+
+    def test_increment_keeps_zero_padding(self) -> None:
+        self.assertEqual(bump_version.increment_version("3.01.21", "patch"), "3.01.22")
+        self.assertEqual(bump_version.increment_version("3.01.21", "minor"), "3.02.00")
+        self.assertEqual(bump_version.increment_version("3.01.21", "major"), "4.00.00")
+
+    def test_increment_creates_missing_segments(self) -> None:
+        self.assertEqual(bump_version.increment_version("4.0", "patch"), "4.0.1")
+        self.assertEqual(bump_version.increment_version("1", "minor"), "1.1")
+        self.assertEqual(bump_version.increment_version("1.9.9", "minor"), "1.10.0")
+
+    def test_resolve_version(self) -> None:
+        self.assertEqual(bump_version.resolve_version("1.0.6", "patch"), "1.0.7")
+        self.assertEqual(bump_version.resolve_version("1.0.6", "2.0"), "2.0")
+        with self.assertRaises(ValueError):
+            bump_version.resolve_version("1.0.6", "latest")
+
+    def test_read_version(self) -> None:
+        self.assertEqual(bump_version.read_version(SAMPLE), "1.2")
+
+    def test_dry_run_does_not_write(self) -> None:
+        path = ROOT / "next" / "pimpmyshoutbox" / "metadata.user.js"
+        before = path.read_text(encoding="utf-8")
+        bump_version.bump_script_version(path, "patch", dry_run=True)
+        self.assertEqual(path.read_text(encoding="utf-8"), before)
 
 
 class BuildMetadataTests(unittest.TestCase):
@@ -124,6 +153,41 @@ class RepositoryScriptsTests(unittest.TestCase):
             self.assertIn("@updateURL", outputs["meta_script"])
             self.assertEqual(outputs["user_script"].count("// @updateURL"), 1)
             self.assertEqual(outputs["user_script"].count("// @downloadURL"), 1)
+
+
+class ToolboxCliTests(unittest.TestCase):
+    def run_cli(self, *argv: str) -> tuple[int, str]:
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            code = tr4ker.main(list(argv))
+        return code, buffer.getvalue()
+
+    def test_list_json_contains_legacy_and_next(self) -> None:
+        code, output = self.run_cli("list", "--json")
+        self.assertEqual(code, 0)
+        ids = {item["script_id"] for item in json.loads(output)}
+        self.assertIn("pimpmyshoutbox-next", ids)
+        self.assertIn("torr9conf", ids)
+
+    def test_list_urls_mentions_install_urls(self) -> None:
+        code, output = self.run_cli("list", "--urls")
+        self.assertEqual(code, 0)
+        self.assertIn("userscripts/pimpmyshoutbox-next.user.js", output)
+
+    def test_no_command_prints_help(self) -> None:
+        code, output = self.run_cli()
+        self.assertEqual(code, 0)
+        self.assertIn("verify", output)
+
+    def test_bump_dry_run_via_cli(self) -> None:
+        code, output = self.run_cli("bump", "torr9conf", "patch", "--dry-run")
+        self.assertEqual(code, 0)
+        self.assertIn("would update torr9conf", output)
+
+    def test_verification_steps_can_skip_next(self) -> None:
+        labels = [label for label, _, _ in tr4ker.verification_steps(skip_next=True)]
+        self.assertEqual(len(labels), 3)
+        self.assertFalse(any("Next" in label for label in labels))
 
 
 if __name__ == "__main__":

@@ -35,7 +35,8 @@ It provides:
 - `dist/`: generated publish-ready files (`*.user.js`, `*.meta.js`, `manifest.json`), git-ignored.
 - `tools/build_userscripts.py`: injects repository URLs, validates metadata (required keys, numeric `@version`, valid URLs, no duplicated singleton keys) and builds Tampermonkey artifacts.
 - `tools/check_userscripts_syntax.py`: runs `node --check` on every source userscript.
-- `tools/bump_version.py`: updates the `@version` of a legacy script or of `pimpmyshoutbox-next`.
+- `tools/tr4ker.py`: unified CLI (doctor, list, verify, build, bump, release, clean).
+- `tools/bump_version.py`: updates the `@version` of a legacy script or of `pimpmyshoutbox-next` (explicit version or `major`/`minor`/`patch`).
 - `tools/audit_userscripts.py`: informational report (file size, large functions, listeners, `innerHTML`).
 - `tests/`: `python3 -m unittest discover tests`.
 - `RELEASE_NOTES.md`: release notes for `pimpmyshoutbox`.
@@ -47,31 +48,38 @@ It provides:
 
 Requirements: Python 3.10+ (CI uses 3.12) and Node.js 22 (see `next/pimpmyshoutbox/.nvmrc`).
 
-```bash
-python3 -m unittest discover tests        # tooling unit tests
-python3 tools/build_userscripts.py --check  # metadata validation
-python3 tools/check_userscripts_syntax.py   # node --check on every script
-python3 tools/build_userscripts.py          # build dist/
+One entry point works on Windows, macOS and Linux, without `make`:
 
-cd next/pimpmyshoutbox
-npm ci && npm test && npm run check         # PimpMyShoutbox Next
+```bash
+python tools/tr4ker.py doctor     # check Python, Node, npm, git and the config
+python tools/tr4ker.py list --urls  # scripts, versions, Tampermonkey URLs
+python tools/tr4ker.py verify     # every gate that CI runs, with a summary
+python tools/tr4ker.py build --next # build dist/ (and the Next bundle)
 ```
 
-With `make`, `make verify` runs every gate that CI runs, and `make help` lists
-the other targets.
+| Command | Purpose |
+| --- | --- |
+| `doctor` | Verify the toolchain and the repository configuration |
+| `list [--urls] [--json]` | Inventory of legacy scripts and PimpMyShoutbox Next |
+| `check` | Metadata validation and `node --check` on every legacy script |
+| `build [-s ID] [--next]` | Build `dist/`; `--next` also bundles Next |
+| `verify [--skip-next] [-k]` | Tooling tests, metadata, syntax, Next tests and build |
+| `audit` | Informational size/safety report of the legacy scripts |
+| `bump ID <x.y.z\|major\|minor\|patch> [-n]` | Update `@version` (`-n` = dry run) |
+| `release ID <x.y.z\|major\|minor\|patch>` | Bump, then run every gate |
+| `clean` | Remove `dist/` folders and Python caches |
 
-To list the available legacy script ids:
+Version increments keep zero-padded segments (`3.01.21` + `patch` → `3.01.22`).
+Script ids: `pimpmyshoutbox`, `torr9conf`, `pimpmyshoutbox-next`.
+
+`make help` lists the equivalent shortcuts, and the original scripts in `tools/`
+(`build_userscripts.py`, `bump_version.py`, ...) keep working unchanged:
 
 ```bash
-python3 tools/build_userscripts.py --list
-```
-
-To bump a published version before a release (legacy ids or `pimpmyshoutbox-next`):
-
-```bash
-python3 tools/bump_version.py pimpmyshoutbox 3.0.33
-python3 tools/bump_version.py torr9conf 1.0.6
-python3 tools/bump_version.py pimpmyshoutbox-next 4.0.5
+python3 -m unittest discover tests
+python3 tools/build_userscripts.py --check
+python3 tools/check_userscripts_syntax.py
+cd next/pimpmyshoutbox && npm ci && npm test && npm run check
 ```
 
 ## Tampermonkey auto-update
