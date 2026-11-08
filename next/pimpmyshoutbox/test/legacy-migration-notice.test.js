@@ -39,7 +39,7 @@ test('legacy is marked deprecated and its install link matches the stable Next u
     h.show();
     const install = h.notice().querySelector('a');
     assert.equal(install.href, nextMetadata.match(/^\/\/ @downloadURL\s+(\S+)/m)[1]);
-    const base = 'https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/';
+    const base = 'https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/';
     assert.equal(install.href, `${base}pimpmyshoutbox-next.user.js`);
     assert.equal(nextMetadata.match(/^\/\/ @updateURL\s+(\S+)/m)[1], `${base}pimpmyshoutbox-next.meta.js`);
     assert.equal(install.target, '_blank');

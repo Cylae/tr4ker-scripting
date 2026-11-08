@@ -126,7 +126,7 @@ Tu peux l'utiliser très légèrement, juste pour masquer quelques pseudos, ou a
 
 ## Lien d'installation
 
-`https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/pimpmyshoutbox.user.js`
+`https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/pimpmyshoutbox.user.js`
 
 ---
 

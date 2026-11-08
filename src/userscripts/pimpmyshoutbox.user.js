@@ -21,7 +21,7 @@
 
     const STORAGE_KEY_USERS = 'tm_hidden_shout_users_t4';
     const TR4KER_HOSTNAME = 'tr4ker.net';
-    const NEXT_SCRIPT_INSTALL_URL = 'https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/pimpmyshoutbox-next.user.js';
+    const NEXT_SCRIPT_INSTALL_URL = 'https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/pimpmyshoutbox-next.user.js';
     const LEGACY_MIGRATION_NOTICE_ID = 'tm-t4-legacy-migration-notice';
     const STORAGE_KEY_LEGACY_MIGRATION_SNOOZED_DATE = 'tm_t4_legacy_migration_snoozed_date';
     const PIXABAY_NOTIFICATION_SOUND_LIBRARY_URL = 'https://pixabay.com/fr/sound-effects/search/notification/';

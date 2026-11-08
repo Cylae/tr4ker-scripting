@@ -9,8 +9,8 @@ ses deux fichiers sont copiés dans le `dist/` de publication, à côté du lega
 
 Les URL restent stables entre les versions :
 
-- installation et `@downloadURL` : `https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/pimpmyshoutbox-next.user.js` ;
-- `@updateURL` : `https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/pimpmyshoutbox-next.meta.js`.
+- installation et `@downloadURL` : `https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/pimpmyshoutbox-next.user.js` ;
+- `@updateURL` : `https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/pimpmyshoutbox-next.meta.js`.
 
 Avant publication, augmenter manuellement `@version` dans `metadata.user.js`.
 Le gestionnaire de userscripts peut alors comparer la version installée à celle

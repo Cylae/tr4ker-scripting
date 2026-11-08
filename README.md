@@ -1,6 +1,12 @@
 # tr4ker-scripting
 
-Repository for the Tr4ker Tampermonkey userscripts:
+Repository for the Tr4ker Tampermonkey userscripts, maintained at
+[Cylae/tr4ker-scripting](https://github.com/Cylae/tr4ker-scripting) (fork of
+[SaltedButch/tr4ker-scripting](https://github.com/SaltedButch/tr4ker-scripting)).
+Scripts installed from the upstream URLs keep updating from upstream; to follow
+this repository, reinstall them from the `Cylae` raw URLs listed below.
+
+It provides:
 
 - a clean `src -> dist` pipeline for the legacy scripts, with automatic `@updateURL` / `@downloadURL`,
 - **PimpMyShoutbox Next** (`next/pimpmyshoutbox`), the modular successor bundled with esbuild,
@@ -83,7 +89,7 @@ Violentmonkey. Recharger Tr4ker et utiliser **Importer une config** dans les
 réglages de Next pour sélectionner le fichier JSON sauvegardé.
 
 Le bouton **Installer maintenant** utilise l'URL raw stable du script Next :
-`https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/pimpmyshoutbox-next.user.js`.
+`https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/pimpmyshoutbox-next.user.js`.
 Le workflow **Publish Userscripts** construit et publie les artefacts legacy et
 Next ensemble depuis `main`, dans un même commit de la branche `userscripts`.
 Aucune release GitHub n'est nécessaire pour diffuser cette migration.
@@ -98,17 +104,17 @@ Published artifacts are served from the `userscripts` branch. For each source fi
 Current published scripts:
 
 ```text
-https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/pimpmyshoutbox.user.js
-https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/pimpmyshoutbox-next.user.js
-https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/torr9conf.user.js
+https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/pimpmyshoutbox.user.js
+https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/pimpmyshoutbox-next.user.js
+https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/torr9conf.user.js
 ```
 
 Current metadata URLs:
 
 ```text
-https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/pimpmyshoutbox.meta.js
-https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/pimpmyshoutbox-next.meta.js
-https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/torr9conf.meta.js
+https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/pimpmyshoutbox.meta.js
+https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/pimpmyshoutbox-next.meta.js
+https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/torr9conf.meta.js
 ```
 
 Les URL legacy sont injectées automatiquement par le build Python. Les URL Next

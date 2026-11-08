@@ -11,7 +11,7 @@ const SINGLETON_KEYS = [
     'name', 'namespace', 'version', 'description', 'author', 'icon',
     'homepageURL', 'supportURL', 'updateURL', 'downloadURL', 'run-at',
 ];
-const BASE = 'https://raw.githubusercontent.com/SaltedButch/tr4ker-scripting/userscripts/';
+const BASE = 'https://raw.githubusercontent.com/Cylae/tr4ker-scripting/userscripts/';
 
 test('metadata block is present and declares the required keys', () => {
     assert.ok(header, 'metadata.user.js must contain a userscript header');
